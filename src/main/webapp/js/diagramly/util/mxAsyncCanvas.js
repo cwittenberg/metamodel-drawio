@@ -139,10 +139,11 @@ mxAsyncCanvas.prototype.rewriteImageSource = function(src)
 {
 	if (src.substring(0, 7) == 'http://' || src.substring(0, 8) == 'https://')
 	{
-		src = '/proxy?url=' + encodeURIComponent(src);
+		//src = '/proxy?url=' + encodeURIComponent(src);		
+		return src;
 	}
 	
-	return src;
+	return null;
 };
 
 mxAsyncCanvas.prototype.image = function(x, y, w, h, src, aspect, flipH, flipV)
