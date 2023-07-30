@@ -64,11 +64,7 @@ public class ProxyServlet extends HttpServlet
 	{
 		String urlParam = request.getParameter("url");
 
-		if (!"1".equals(System.getenv("ENABLE_DRAWIO_PROXY")))
-		{
-			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-		}
-		else if (Utils.sanitizeUrl(urlParam))
+		if (Utils.sanitizeUrl(urlParam))
 		{
 			// build the UML source from the compressed request parameter
 			String ref = request.getHeader("referer");
