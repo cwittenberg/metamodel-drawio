@@ -1028,8 +1028,13 @@ mxMermaidToDrawio = function(graph, diagramtype, extra)
             convertGraph(graph, null, drawGraph);
         }
 
-        console.log("rearranging");
-        new mxHierarchicalLayout(drawGraph, mxConstants.DIRECTION_NORTH);
+  
+        
+        //rearrange vertically
+        var layout = new mxHierarchicalLayout(drawGraph, mxConstants.DIRECTION_NORTH);				
+        var selectionCells = drawGraph.getSelectionCells();
+        layout.execute(drawGraph.getDefaultParent(), selectionCells.length == 0 ? null : selectionCells);
+
 
         var codec = new mxCodec();
         var node = codec.encode(drawGraph.getModel());
