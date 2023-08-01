@@ -8250,6 +8250,8 @@
 	 */
 	EditorUi.prototype.createMermaidXml = function(input, config, data, w, h)
 	{
+		console.log("mermaid", input,config,data);
+
 		var graph = new Graph(document.createElement('div'));
 		var cell = graph.insertVertex(null, null, null, 0, 0, w, h,
 			'shape=image;noLabel=1;verticalAlign=top;' +
@@ -8260,7 +8262,11 @@
 		var codec = new mxCodec();
 		var node = codec.encode(graph.getModel());
 
-		return mxUtils.getXml(node);
+		var result = mxUtils.getXml(node);
+
+		console.log("mermaid result", result);
+
+		return result;
 	};
 
 	/**

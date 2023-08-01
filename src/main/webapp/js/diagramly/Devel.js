@@ -153,23 +153,23 @@ mxscript(geBasePath +'/Dialogs.js');
 
 // Loads main classes
 mxscript(drawDevUrl + 'js/diagramly/sidebar/Sidebar.js');
-mxscript(drawDevUrl + 'js/diagramly/sidebar/Sidebar-ActiveDirectory.js');
+/*mxscript(drawDevUrl + 'js/diagramly/sidebar/Sidebar-ActiveDirectory.js');
 mxscript(drawDevUrl + 'js/diagramly/sidebar/Sidebar-Advanced.js');
 mxscript(drawDevUrl + 'js/diagramly/sidebar/Sidebar-AlliedTelesis.js');
-mxscript(drawDevUrl + 'js/diagramly/sidebar/Sidebar-Android.js');
+mxscript(drawDevUrl + 'js/diagramly/sidebar/Sidebar-Android.js');*/
 mxscript(drawDevUrl + 'js/diagramly/sidebar/Sidebar-ArchiMate.js');
 mxscript(drawDevUrl + 'js/diagramly/sidebar/Sidebar-ArchiMate3.js');
-mxscript(drawDevUrl + 'js/diagramly/sidebar/Sidebar-Arrows2.js');
+/*mxscript(drawDevUrl + 'js/diagramly/sidebar/Sidebar-Arrows2.js');
 mxscript(drawDevUrl + 'js/diagramly/sidebar/Sidebar-Atlassian.js');
 mxscript(drawDevUrl + 'js/diagramly/sidebar/Sidebar-AWS.js');
-mxscript(drawDevUrl + 'js/diagramly/sidebar/Sidebar-AWS3.js');
+mxscript(drawDevUrl + 'js/diagramly/sidebar/Sidebar-AWS3.js');*/
 mxscript(drawDevUrl + 'js/diagramly/sidebar/Sidebar-AWS3D.js');
 mxscript(drawDevUrl + 'js/diagramly/sidebar/Sidebar-AWS4.js');
 mxscript(drawDevUrl + 'js/diagramly/sidebar/Sidebar-AWS4b.js');
-mxscript(drawDevUrl + 'js/diagramly/sidebar/Sidebar-Azure.js');
-mxscript(drawDevUrl + 'js/diagramly/sidebar/Sidebar-Azure2.js');
+//mxscript(drawDevUrl + 'js/diagramly/sidebar/Sidebar-Azure.js');
+//mxscript(drawDevUrl + 'js/diagramly/sidebar/Sidebar-Azure2.js');
 mxscript(drawDevUrl + 'js/diagramly/sidebar/Sidebar-Basic.js');
-mxscript(drawDevUrl + 'js/diagramly/sidebar/Sidebar-Bootstrap.js');
+/*mxscript(drawDevUrl + 'js/diagramly/sidebar/Sidebar-Bootstrap.js');
 mxscript(drawDevUrl + 'js/diagramly/sidebar/Sidebar-BPMN.js');
 mxscript(drawDevUrl + 'js/diagramly/sidebar/Sidebar-C4.js');
 mxscript(drawDevUrl + 'js/diagramly/sidebar/Sidebar-Cabinet.js');
@@ -204,12 +204,12 @@ mxscript(drawDevUrl + 'js/diagramly/sidebar/Sidebar-Rack.js');
 mxscript(drawDevUrl + 'js/diagramly/sidebar/Sidebar-Signs.js');
 mxscript(drawDevUrl + 'js/diagramly/sidebar/Sidebar-Sitemap.js');
 mxscript(drawDevUrl + 'js/diagramly/sidebar/Sidebar-Sysml.js');
-mxscript(drawDevUrl + 'js/diagramly/sidebar/Sidebar-ThreatModeling.js');
+mxscript(drawDevUrl + 'js/diagramly/sidebar/Sidebar-ThreatModeling.js');*/
 mxscript(drawDevUrl + 'js/diagramly/sidebar/Sidebar-UML25.js');
-mxscript(drawDevUrl + 'js/diagramly/sidebar/Sidebar-Veeam.js');
+/*mxscript(drawDevUrl + 'js/diagramly/sidebar/Sidebar-Veeam.js');
 mxscript(drawDevUrl + 'js/diagramly/sidebar/Sidebar-Veeam2.js');
 mxscript(drawDevUrl + 'js/diagramly/sidebar/Sidebar-VVD.js');
-mxscript(drawDevUrl + 'js/diagramly/sidebar/Sidebar-WebIcons.js');
+mxscript(drawDevUrl + 'js/diagramly/sidebar/Sidebar-WebIcons.js');*/
 
 mxscript(drawDevUrl + 'js/diagramly/util/mxJsCanvas.js');
 mxscript(drawDevUrl + 'js/diagramly/util/mxAsyncCanvas.js');
