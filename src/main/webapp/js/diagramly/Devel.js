@@ -291,5 +291,8 @@ if (urlParams['orgChartDev'] == '1')
 // Miro Import
 mxscript(drawDevUrl + 'js/diagramly/miro/MiroImporter.js');
 
+//jquery
+mxscript(drawDevUrl + 'js/jquery/jquery-3.6.0.min.js');
+
 // Mermaid to draw.io converter
 mxscript(drawDevUrl + 'js/mermaid/mermaid2drawio.js');

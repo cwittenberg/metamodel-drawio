@@ -133,7 +133,7 @@ mxMermaidToDrawio = function(graph, diagramtype, extra)
                         (node.type == 'group'? 'verticalAlign=top;' : ''), node, parent, drawGraph);*/
                 //v = simpleShape('whiteSpace=wrap;strokeWidth=2;html=1;outlineConnect=0;whiteSpace=wrap;fillColor=#99E0FFFF;archiType=rounded;shape=mxgraph.archimate3.application', node, parent, drawGraph);
 
-                var style = 'whiteSpace=wrap;strokeWidth=2;html=1;outlineConnect=0;whiteSpace=wrap;fillColor=#99E0FFFF;archiType=rounded;shape=mxgraph.archimate3.application;appType=goal';
+                var style = 'whiteSpace=wrap;strokeWidth=2;html=1;outlineConnect=0;whiteSpace=wrap;fillColor=#99E0FFFF;archiType=rounded;shape=mxgraph.archimate3.application';
                 var nodeWidth = 160;
                 var nodeHeight = 60;
 
@@ -142,10 +142,10 @@ mxMermaidToDrawio = function(graph, diagramtype, extra)
 
                 v = insertVertex(drawGraph, parent, null, formatLabel(node.labelText), node.x, node.y, nodeWidth, nodeHeight, style);
 
-                drawGraph.setAttributeForCell(v, 'link', 'https://www.google.com');
+                /*drawGraph.setAttributeForCell(v, 'link', 'https://www.google.com');
                 drawGraph.setAttributeForCell(v, 'kind', 'Capability');
                 drawGraph.setAttributeForCell(v, 'tooltip', 'Capability: new');
-                drawGraph.setAttributeForCell(v, 'placeholders', '1');
+                drawGraph.setAttributeForCell(v, 'placeholders', '1');*/
             
 
 
@@ -612,7 +612,7 @@ mxMermaidToDrawio = function(graph, diagramtype, extra)
         var target = findTerminal(msg, nodesMap, 'stopx');
         var selfLoop = source == target;
         var e = drawGraph.insertEdge(null, null, formatLabel(msg.message), source, target, 
-                (selfLoop? 'curved=1;' : 'verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;') +
+                (selfLoop? 'edgeStyle=elbowEdgeStyle;elbow=vertical;' : 'verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;') +
                 edgeStyle);
 
         if (selfLoop)
@@ -976,6 +976,134 @@ mxMermaidToDrawio = function(graph, diagramtype, extra)
         }
     };
 
+
+
+    /**
+     * For any MX object where 'archimate3' is in the style:
+     * - Figure out Kind (table) and ID (metamodel object) based on convention in Label Kind:ID
+     * - Lookup MX formatting code for the Kind:ID combination
+     * - Substitute original X,Y and Source/Target parameters in the MX to place the element and ensure edges are drawn.
+     * 
+     * Concern: performance may be sub-par, for each object we call the XML API
+     * Potential perf optimization: group requests and switch to native MX object rather than parsing nasty strings.
+     */ 
+    function replaceMetamodelObjects(mx) {
+        var parser = new DOMParser();
+        var xmlDoc = parser.parseFromString(mx, "text/xml");
+    
+        var objs = xmlDoc.getElementsByTagName('mxCell');
+        
+        $.each(objs, function(i, obj) {
+            if(obj.children[0] != undefined) {
+                 
+                if($(obj).attr("style").includes("archimate3")) {                
+                    var label = $(obj).attr("value");
+    
+                    if(label.includes(":")) {
+                        var parts = label.split(":");
+                        var kind = parts[0];
+                        var id = parts[1];
+    
+                        //retrieve MX from central service
+                        var xml = fetchMetamodelMX(kind, id);
+    
+                        if(xml != "" && xml != null) {
+                            var newObj = parser.parseFromString(xml, "text/xml");
+    
+                            var newEl = newObj.getElementsByTagName("UserObject");
+    
+                            if(newEl.length == 0) {
+                                //user object not found. sometimes its using <object> instead
+                                newEl = newObj.getElementsByTagName("object");
+    
+                                if(newEl.length > 0) {
+                                    newEl = newEl[0];
+                                } else {
+                                    //object not found, try rect instead
+                                    newEl = newObj.getElementsByTagName("rect");
+    
+                                    console.log("(potentially) not found in", xml);
+                                    console.log("obj:", newObj);
+    
+                                    if(newEl.length > 0) {
+                                        newEl = newEl[0];
+                                    } else {
+                                        console.error(`Cannot find UserObject, Object or Rect for ${kind}: ${id}`);                                
+                                    }
+                                }
+                            } else {
+                                newEl = newEl[0];
+                            }
+    
+                            if(newEl != undefined && newEl != null) {
+                                source = obj.outerHTML;
+                                target = newEl.outerHTML;
+    
+                                //next thing (nasty) - reconstruct x,y and source/target elements so lines are working again
+    
+                                //find x,y and replace with already existant X, Y definition (in mx variable to this method)
+                                var srcGeomStart = source.indexOf('<mxGeometry');
+                                var srcGeomEnd = source.indexOf('width=', srcGeomStart);
+                                var srcGeomStr = source.substring(srcGeomStart, srcGeomEnd);
+    
+                                var trgGeomStart = target.indexOf('<mxGeometry');
+                                var trgGeomEnd = target.indexOf('width=', trgGeomStart);
+                                var trgGeomStr = target.substring(trgGeomStart, trgGeomEnd);
+    
+                                //replace source and target IDs so that edges are working again
+                                var srcID = $(source).attr('id');
+                                var trgID = $(target).attr('id');
+                                console.log("src:", srcID, trgID);
+    
+                                mx = mx.replaceAll(`source="${srcID}"`, `source="${trgID}"`);
+                                mx = mx.replaceAll(`target="${srcID}"`, `target="${trgID}"`);
+                                mx = mx.replaceAll(`parent="${srcID}"`, `parent="${trgID}"`);
+                                                        
+                                target = target.replaceAll(trgGeomStr, srcGeomStr);
+                                
+                                mx = mx.replaceAll(source, target);
+                            } else {
+                                console.error("No solution for this element", obj);
+                            }
+                        } else {
+                            console.error("Empty XML received from metamodel");
+                        }
+                    }
+                }
+            }    
+        });
+    
+        return mx;
+    }    
+
+    /**
+     * Fetches MX from shape service, returning raw XML
+     */
+    function fetchMetamodelMX(kind, id) {
+        if(urlParams['domain'] == undefined) {
+            console.error("Domain parameter not given - interop with metamodel failed");
+
+            return null;
+        } else {
+            var domain = urlParams['domain'];
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', `${domain}/diagrams/shapes/${kind}/${id}`, false);  // 'false' makes the request synchronous (slow), but its necessary
+            xhr.send(null);
+
+            if (xhr.status === 200) {
+                var data = xhr.responseText;
+                if(data.length > 0) {
+                    return data;
+                } else {
+                    return null;
+                }
+            } else {
+                return null;
+            }
+        }
+    }
+
     function convertDiagram(graph)
     {
         var drawGraph = createMxGraph();
@@ -1037,8 +1165,17 @@ mxMermaidToDrawio = function(graph, diagramtype, extra)
 
 
         var codec = new mxCodec();
-        var node = codec.encode(drawGraph.getModel());
-        var modelString = mxUtils.getXml(node);
+
+        
+        var node = codec.encode(drawGraph.getModel());        
+        
+        var modelString = mxUtils.getXml(node);        
+
+        console.log("before", modelString);
+        modelString = replaceMetamodelObjects(modelString);
+        console.log("after", modelString);
+
+        //modelString = convertToMetamodelObjects(modelString);
 
         for (var i = 0; i < mxMermaidToDrawio.listeners.length; i++)
         {

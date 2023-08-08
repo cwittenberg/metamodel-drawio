@@ -441,7 +441,7 @@ EditorUi = function(editor, container, lightbox)
 				
 				return textEditing(evt);
 			};
-			
+									
 			if (mxClient.IS_IE && (typeof(document.documentMode) === 'undefined' || document.documentMode < 9))
 			{
 				mxEvent.addListener(this.diagramContainer, 'contextmenu', linkHandler);

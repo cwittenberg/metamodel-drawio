@@ -12183,8 +12183,19 @@ if (typeof mxVertexHandler !== 'undefined')
 				a.setAttribute('target', this.linkTarget);
 			}
 			
+			var shortMsg = short(label, 40);
+
+			if(shortMsg.startsWith("?view")) {
+				shortMsg = "Open metamodel object";
+				a.setAttribute('title', shortMsg);
+
+				//bugfix, we use ':' instead of '&' else drawio doesnt work.
+				var h = a.getAttribute('href');
+				h.setAttribute(h.replace(':filters[', '&filters['));
+			}
+
 			// Adds shortened label to link
-			mxUtils.write(a, short(label, 40));
+			mxUtils.write(a, shortMsg);
 			
 			// Handles custom links
 			if (this.isCustomLink(link))
@@ -14677,7 +14688,7 @@ if (typeof mxVertexHandler !== 'undefined')
 					}
 				}
 				else if (link != null || (links != null && links.length > 0))
-				{
+				{					
 					var img = document.createElement('img');
 					img.className = 'geAdaptiveAsset';
 					img.setAttribute('src', Editor.editImage);
@@ -14715,10 +14726,14 @@ if (typeof mxVertexHandler !== 'undefined')
 					
 					if (link != null)
 					{
+						console.log('right section 2');
 						var wrapper = document.createElement('div');
 						wrapper.style.display = 'flex';
 						wrapper.style.alignItems = 'center';
-						wrapper.appendChild(this.graph.createLinkForHint(link));
+						var hintLink = this.graph.createLinkForHint(link);
+
+						console.log(hintLink);
+						wrapper.appendChild(hintLink);
 
 						this.linkHint.appendChild(wrapper);
 						
@@ -14726,6 +14741,10 @@ if (typeof mxVertexHandler !== 'undefined')
 							!this.graph.isCellLocked(this.state.cell))
 						{
 							var changeLink = img.cloneNode(true);
+
+							console.log(changeLink);
+							/*CUSTOMEDIT: remove change or removal capability of internal links
+							
 							wrapper.appendChild(changeLink);
 							
 							mxEvent.addListener(changeLink, 'click', mxUtils.bind(this, function(evt)
@@ -14733,18 +14752,20 @@ if (typeof mxVertexHandler !== 'undefined')
 								this.graph.setSelectionCell(this.state.cell);
 								this.graph.editLink();
 								mxEvent.consume(evt);
-							}));
+							}));*/
 
 							var trashLink = trash.cloneNode(true);
-							wrapper.appendChild(trashLink);
+							/*wrapper.appendChild(trashLink);
 
 							mxEvent.addListener(trashLink, 'click', mxUtils.bind(this, function(evt)
 							{
 								this.graph.setLinkForCell(this.state.cell, null);
 								mxEvent.consume(evt);
-							}));
+							}));*/
 						}
 					}
+
+					console.log("links: ", links);
 	
 					if (links != null)
 					{
@@ -14752,16 +14773,35 @@ if (typeof mxVertexHandler !== 'undefined')
 						{
 							(mxUtils.bind(this, function(currentLink, index)
 							{
+								console.log('links3');
 								var div = document.createElement('div');
 								div.style.display = 'flex';
 								div.style.alignItems = 'center';
 								div.style.marginTop = (link != null || index > 0) ? '6px' : '0px';
+
+								var linkTitle = mxUtils.getTextContent(currentLink);
+								
+								console.log(currentLink);
+
+								var isMetamodelObject = false;
+								if(currentLink.getAttribute('href').startsWith("?view")) {
+									linkTitle = "Open metamodel object";
+									isMetamodelObject = true;
+
+									//bugfix, we use ':' instead of '&' else drawio doesnt work.
+									var h = currentLink.getAttribute('href');
+									currentLink.setAttribute(h.replace(':filters[', '&filters['));
+								}								
+
 								div.appendChild(this.graph.createLinkForHint(
 									currentLink.getAttribute('href'),
-									mxUtils.getTextContent(currentLink)));
+									linkTitle));
+								/*div.appendChild(this.graph.createLinkForHint(
+										currentLink.getAttribute('href'),
+										mxUtils.getTextContent(currentLink)));*/
 								
 								var changeLink = img.cloneNode(true);
-								div.appendChild(changeLink);
+								//div.appendChild(changeLink);
 								
 								var updateLink = mxUtils.bind(this, function(value)
 								{
@@ -14784,12 +14824,16 @@ if (typeof mxVertexHandler !== 'undefined')
 									else
 									{
 										anchor.setAttribute('href', value);
+
+										if(isMetamodelObject) {
+											anchor.setAttribute('target', '_blank');
+										}
 									}
 
 									this.graph.labelChanged(this.state.cell, tmp.innerHTML);
 								});
 								
-								mxEvent.addListener(changeLink, 'click', mxUtils.bind(this, function(evt)
+								/*mxEvent.addListener(changeLink, 'click', mxUtils.bind(this, function(evt)
 								{
 									this.graph.showLinkDialog(currentLink.getAttribute('href') || '',
 										mxResources.get('apply'), updateLink);
@@ -14803,7 +14847,7 @@ if (typeof mxVertexHandler !== 'undefined')
 								{
 									updateLink();
 									mxEvent.consume(evt);
-								}));
+								}));*/
 								
 								this.linkHint.appendChild(div);
 							}))(links[i], i);
