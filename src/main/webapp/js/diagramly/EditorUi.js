@@ -363,7 +363,7 @@
 	/**
 	 * Maximum size for text files in labels is 0.5 MB.
 	 */
-	EditorUi.prototype.maxTextBytes = 500000;
+	EditorUi.prototype.maxTextBytes = 1000000;
 
 	/**
 	 * Holds the current file.
@@ -15913,7 +15913,7 @@
 			if (!noExit)
 			{
 				this.diagramContainer.removeAttribute('data-bounds');
-				Editor.inlineFullscreen = false;
+				Editor.inlineFullscreen = true;
 				graph.model.clear();
 				this.editor.undoManager.clear();
 				this.setBackgroundImage(null);

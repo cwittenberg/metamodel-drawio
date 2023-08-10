@@ -379,9 +379,9 @@ Sidebar.prototype.createMoreShapes = function()
 	div.style.marginTop = '-1px';
 	div.style.height = this.moreShapesHeight+ 'px';
 	
-	var title = document.createElement('button');
+	/*var title = document.createElement('button');
 	title.className = 'geBtn gePrimaryBtn';
-	title.style.display = 'inline-flex';
+	title.style.display = 'none';
 	title.style.alignItems = 'center';
 	title.style.whiteSpace = 'nowrap';
 	title.style.padding = '8px';
@@ -407,7 +407,7 @@ Sidebar.prototype.createMoreShapes = function()
 		mxEvent.consume(evt);
 	}));
 	
-	div.appendChild(title);
+	div.appendChild(title);*/
 	
 	return div;
 };

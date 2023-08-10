@@ -2,8 +2,8 @@
  * Copyright (c) 2006-2016, JGraph Ltd
  */
 // Disables theme in viewer and lightbox
-Editor.currentTheme = '';
-window.uiTheme = '';
+Editor.currentTheme = 'dark';
+window.uiTheme = 'dark';
 
 /**
  * No CSS and resources available in embed mode. Parameters and docs:
@@ -69,7 +69,7 @@ GraphViewer.prototype.autoOrigin = true;
 /**
  * If the diagram should be centered. Default is false.
  */
-GraphViewer.prototype.center = false;
+GraphViewer.prototype.center = true;
 
 /**
  * Force centering of the diagram. Default is false.
@@ -120,7 +120,7 @@ GraphViewer.prototype.responsive = false;
 /**
  * Dark mode
  */
-GraphViewer.prototype.darkMode = false;
+GraphViewer.prototype.darkMode = true;
 
 /**
  * Initializes the viewer.

@@ -14723,26 +14723,36 @@ if (typeof mxVertexHandler !== 'undefined')
 					}
 	
 					this.linkHint.innerText = '';
+
+					
+					
+					link = urlParams['domain'] + link.replace(":filters[", "&filters[");
+					$(this.linkHint).append('<a class="metamodelLink" rel="nofollow noopener noreferer" target="_blank" title="Open metamodel object" href="' + link + '"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBhcmlhLWhpZGRlbj0idHJ1ZSIgcm9sZT0iaW1nIiB4PSIyNTYiIHk9IjI1NiIgY2xhc3M9Imljb25pZnkgaWNvbmlmeS0taW9uIiB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDUxMiA1MTIiIHN0eWxlPSJjb2xvcjogcmdiKDI0NCwgNjMsIDk0KTsiPjxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2NjMjkxZiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBzdHJva2Utd2lkdGg9IjMyIiBkPSJNMzg0IDIyNHYxODRhNDAgNDAgMCAwIDEtNDAgNDBIMTA0YTQwIDQwIDAgMCAxLTQwLTQwVjE2OGE0MCA0MCAwIDAgMSA0MC00MGgxNjcuNDhNMzM2IDY0aDExMnYxMTJNMjI0IDI4OEw0NDAgNzIiPjwvcGF0aD48L3N2Zz4K" style="width:20px;margin-right:5px;"></a>');					
+					
+					$(this.linkHint).append("<a class='relatedLink' data-link='" + link + "' rel=\"nofollow noopener noreferer\" href=\"#\" title=\"Connect metamodel objects\"><img alt=\"Metamodel\" src=\"data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDMyIDMyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogICAgPHBhdGggZmlsbD0iI2NjMjkxZiIgZD0iTTI2IDZhMy45OTYgMy45OTYgMCAwIDAtMy44NTggM0gxNy45M0E3Ljk5NiA3Ljk5NiAwIDEgMCA5IDE3LjkzdjQuMjEyYTQgNCAwIDEgMCAyIDB2LTQuMjExYTcuOTUxIDcuOTUxIDAgMCAwIDMuODk4LTEuNjJsMy42NjkgMy42N0EzLjk1MyAzLjk1MyAwIDAgMCAxOCAyMmE0IDQgMCAxIDAgNC00YTMuOTUyIDMuOTUyIDAgMCAwLTIuMDE5LjU2N2wtMy42Ny0zLjY3QTcuOTUgNy45NSAwIDAgMCAxNy45MzIgMTFoNC4yMTFBMy45OTMgMy45OTMgMCAxIDAgMjYgNlpNMTIgMjZhMiAyIDAgMSAxLTItMmEyLjAwMiAyLjAwMiAwIDAgMSAyIDJabS0yLTEwYTYgNiAwIDEgMSA2LTZhNi4wMDcgNi4wMDcgMCAwIDEtNiA2Wm0xNCA2YTIgMiAwIDEgMS0yLTJhMi4wMDIgMi4wMDIgMCAwIDEgMiAyWm0yLTEwYTIgMiAwIDEgMSAyLTJhMi4wMDIgMi4wMDIgMCAwIDEtMiAyWiIvPgo8L3N2Zz4K\" style=\"width:20px;\"></a>");
+					$(".relatedLink").on("click", function() {
+						addRelated(link);
+					});
+					
 					
 					if (link != null)
-					{
-						console.log('right section 2');
+					{						
 						var wrapper = document.createElement('div');
 						wrapper.style.display = 'flex';
 						wrapper.style.alignItems = 'center';
 						var hintLink = this.graph.createLinkForHint(link);
 
-						console.log(hintLink);
-						wrapper.appendChild(hintLink);
+						
+						//wrapper.appendChild(hintLink);
 
-						this.linkHint.appendChild(wrapper);
+						//this.linkHint.appendChild(wrapper);
 						
 						if (this.graph.isEnabled() && typeof this.graph.editLink === 'function' &&
 							!this.graph.isCellLocked(this.state.cell))
 						{
 							var changeLink = img.cloneNode(true);
 
-							console.log(changeLink);
+							
 							/*CUSTOMEDIT: remove change or removal capability of internal links
 							
 							wrapper.appendChild(changeLink);
@@ -14765,9 +14775,9 @@ if (typeof mxVertexHandler !== 'undefined')
 						}
 					}
 
-					console.log("links: ", links);
+					
 	
-					if (links != null)
+					/*if (links != null)
 					{
 						for (var i = 0; i < links.length; i++)
 						{
@@ -14847,12 +14857,12 @@ if (typeof mxVertexHandler !== 'undefined')
 								{
 									updateLink();
 									mxEvent.consume(evt);
-								}));*/
+								}));*
 								
 								this.linkHint.appendChild(div);
 							}))(links[i], i);
 						}
-					}
+					}*/
 				}
 
 				if (this.linkHint != null)
