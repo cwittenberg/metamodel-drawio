@@ -338,6 +338,9 @@
 						//jquery
 						mxscript('js/jquery/jquery-3.6.0.min.js');
 
+						//bootstrap
+						mxscript('js/bootstrap.bundle.min.js');
+
 						//mermaid
 						mxscript('js/mermaid/mermaid2drawio.js');
 
@@ -345,6 +348,7 @@
 						mxscript('js/gsap.min.js');
 						//common (metamodel)
 						mxscript('js/common.ui.js');
+
 					});
 				};
 				
@@ -370,9 +374,188 @@
 			}
 		};
 
+		/**
+		 * For any MX object where 'archimate3' is in the style:
+		 * - Figure out Kind (table) and ID (metamodel object) based on convention in Label Kind:ID
+		 * - Lookup MX formatting code for the Kind:ID combination
+		 * - Substitute original X,Y and Source/Target parameters in the MX to place the element and ensure edges are drawn.
+		 * 
+		 * Concern: performance may be sub-par, for each object we call the XML API
+		 * Potential perf optimization: group requests and switch to native MX object rather than parsing nasty strings.		 		 		 
+		 */ 
+		function replaceMetamodelObjects(mx) {
+			var parser = new DOMParser();
+			var xmlDoc = parser.parseFromString(mx, "text/xml");
+		
+			var objs = xmlDoc.getElementsByTagName('mxCell');
+			
+			$.each(objs, function(i, obj) {
+				if(obj.children[0] != undefined) {
+					
+					if($(obj).attr("style").includes("archimate3")) {                
+						var label = $(obj).attr("value");
+		
+						if(label.includes(":")) {
+							var parts = label.split(":");
+							var kind = parts[0];
+							var id = parts[1];
+		
+							//retrieve MX from central service
+							var xml = fetchMetamodelMX(kind, id);
+		
+							if(xml != "" && xml != null) {
+								var newObj = parser.parseFromString(xml, "text/xml");
+		
+								var newEl = newObj.getElementsByTagName("UserObject");
+		
+								if(newEl.length == 0) {
+									//user object not found. sometimes its using <object> instead
+									newEl = newObj.getElementsByTagName("object");
+		
+									if(newEl.length > 0) {
+										newEl = newEl[0];
+									} else {
+										//object not found, try rect instead
+										newEl = newObj.getElementsByTagName("rect");
+		
+										console.log("(potentially) not found in", xml);
+										console.log("obj:", newObj);
+		
+										if(newEl.length > 0) {
+											newEl = newEl[0];
+										} else {
+											console.error(`Cannot find UserObject, Object or Rect for ${kind}: ${id}`);                                
+										}
+									}
+								} else {
+									newEl = newEl[0];
+								}
+		
+								if(newEl != undefined && newEl != null) {
+									source = obj.outerHTML;
+									target = newEl.outerHTML;
+		
+									//next thing (nasty) - reconstruct x,y and source/target elements so lines are working again
+		
+									//find x,y and replace with already existant X, Y definition (in mx variable to this method)
+									//this is for the placement of the nodes, substitute them with the generated objects
+									var srcGeomStart = source.indexOf('<mxGeometry');
+									var srcGeomEnd = source.indexOf('width=', srcGeomStart);
+									var srcGeomStr = source.substring(srcGeomStart, srcGeomEnd);
+		
+									var trgGeomStart = target.indexOf('<mxGeometry');
+									var trgGeomEnd = target.indexOf('width=', trgGeomStart);
+									var trgGeomStr = target.substring(trgGeomStart, trgGeomEnd);
+		
+									//replace source and target IDs so that edges are working again
+									var srcID = $(source).attr('id');
+									var trgID = $(target).attr('id');
+									console.log("src:", srcID, trgID);
+
+									target = target.replaceAll('id="substituteme"', `id="${srcID}"`);																									
+									target = target.replaceAll(trgGeomStr, srcGeomStr);
+									
+									mx = mx.replaceAll(source, target);
+								} else {
+									console.error("No solution for this element", obj);
+								}
+							} else {
+								console.error("Empty XML received from metamodel");
+							}
+						}
+					}
+				}    
+			});
+
+			//mx = mx.replaceAll('noEdgeStyle=1;orthogonal=1;rounded=0;', 'noEdgeStyle=1;orthogonal=1;rounded=0;');
+			//mx = mx.replaceAll('startArrow=none;endArrow=block;', 'curved=1;startArrow=none;endArrow=block;');			
+		
+			return mx;
+		}    
+
+		/**
+		 * Fetches MX from shape service, returning raw XML
+		 */
+		function fetchMetamodelMX(kind, id) {
+			if(urlParams['domain'] == undefined) {
+				console.error("Domain parameter not given - interop with metamodel failed");
+
+				return null;
+			} else {
+				var domain = urlParams['domain'];
+
+				var xhr = new XMLHttpRequest();
+				xhr.open('GET', `${domain}/diagrams/shapes/${kind}/${id}`, false);  // 'false' makes the request synchronous (slow), but its necessary
+				xhr.send(null);
+
+				if (xhr.status === 200) {
+					var data = xhr.responseText;
+					if(data.length > 0) {
+						return data;
+					} else {
+						return null;
+					}
+				} else {
+					return null;
+				}
+			}
+		}
+
+
 		function addRelated(text) {
 			console.log('hello');
 			$('.geHint').hide();
+		}
+
+		function openWhereUsed(text) {
+			$('.geHint').hide();
+			showLogo();
+						
+			var url = urlParams['domain'] + "/diagrams/whereused/" + text + "?current=" + urlParams['modelID'];
+
+			$.get(url, function(data) {
+				// Create the modal structure with the fetched data embedded
+				let modalHTML = `
+					<div class="modal fade" id="whereUsedModal" data-backdrop="false" tabindex="-1" aria-labelledby="dynamicModalLabel" aria-hidden="true">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="dynamicModalLabel">Models where else this object is used</h5>									
+								</div>
+								<div class="modal-body">
+									${data}
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn-close btn-primary" style="width:50px;height:20px;" data-bs-dismiss="modal" aria-label="Close">Close</button>									
+								</div>
+							</div>
+						</div>
+					</div>
+				`;
+
+				// Append the modal structure to the body
+				$('body').append(modalHTML);
+
+				let modalOptions = {
+					backdrop: false
+				};
+
+				// Instantiate a new modal instance and show it
+				let modalInstance = new bootstrap.Modal(document.getElementById('whereUsedModal'), modalOptions);
+				modalInstance.show();
+
+				// Remove the modal from the DOM after it's hidden
+				$('#whereUsedModal').on('hidden.bs.modal', function() {
+					$(this).remove();
+				});
+			}).fail(function() {
+				console.error("Failed to load content from the provided URL.");
+				showMessageBox("Failed to load the content for where used", "critical", "Where Used content");
+
+			}).always(function() {
+				$('#loaderLogo').remove();
+			});
+			
 		}
 	</script>
     <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/plgmlhohecdddhbmmkncjdmlhcmaachm">
@@ -381,6 +564,8 @@
 	<link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
 	<link rel="mask-icon" href="images/safari-pinned-tab.svg" color="#d89000">
     <link rel="stylesheet" type="text/css" href="styles/grapheditor.css">
+	<link rel="stylesheet" type="text/css" href="bootstrap.css">
+	
     <link rel="canonical" href="https://app.diagrams.net">
 	<link rel="manifest" href="images/manifest.json">
 	<link rel="shortcut icon" href="favicon.ico">
@@ -447,6 +632,24 @@
 			left: 50%;
 			transform: translate(-50%, -50%);
 		}
+		.relatedLink {
+			margin-right:5px;
+		}
+		td {
+			padding:3px!important;
+		}
+		hr{
+			margin:0px;
+		}
+
+		#modelTitle {
+			z-index:9999;
+			right:50px;
+			text-align: right;
+			top:5px;
+			margin-right:15px;
+			color:#cc291f;
+		}
 	</style>
 	<!-- Workaround for binary XHR in IE 9/10, see App.loadUrl -->
 	<!--[if (IE 9)|(IE 10)]><!-->
@@ -470,10 +673,16 @@
 <body class="geEditor">
 <div id="geInfo">
 	<div class="geBlock">
-		<!--<h1 style="color:white;">Loading metamodel designer...</h1>
-		
-		<h2 id="geStatus"></h2>//-->
-		
+		<script>
+			// Add title
+			window.setTimeout(function() {
+					var title = $('<div>', {
+							text: atob(urlParams['modelTitle']),
+							id: "modelTitle"
+					});
+					$('.geMenubar').append(title);
+			}, 3000);
+		</script>
 	</div>
 </div>
 <script type="text/javascript">

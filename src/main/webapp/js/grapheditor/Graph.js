@@ -14724,14 +14724,21 @@ if (typeof mxVertexHandler !== 'undefined')
 	
 					this.linkHint.innerText = '';
 
-					
+					var oldLink = link;
 					
 					link = urlParams['domain'] + link.replace(":filters[", "&filters[");
 					$(this.linkHint).append('<a class="metamodelLink" rel="nofollow noopener noreferer" target="_blank" title="Open metamodel object" href="' + link + '"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBhcmlhLWhpZGRlbj0idHJ1ZSIgcm9sZT0iaW1nIiB4PSIyNTYiIHk9IjI1NiIgY2xhc3M9Imljb25pZnkgaWNvbmlmeS0taW9uIiB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDUxMiA1MTIiIHN0eWxlPSJjb2xvcjogcmdiKDI0NCwgNjMsIDk0KTsiPjxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2NjMjkxZiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBzdHJva2Utd2lkdGg9IjMyIiBkPSJNMzg0IDIyNHYxODRhNDAgNDAgMCAwIDEtNDAgNDBIMTA0YTQwIDQwIDAgMCAxLTQwLTQwVjE2OGE0MCA0MCAwIDAgMSA0MC00MGgxNjcuNDhNMzM2IDY0aDExMnYxMTJNMjI0IDI4OEw0NDAgNzIiPjwvcGF0aD48L3N2Zz4K" style="width:20px;margin-right:5px;"></a>');					
 					
 					$(this.linkHint).append("<a class='relatedLink' data-link='" + link + "' rel=\"nofollow noopener noreferer\" href=\"#\" title=\"Connect metamodel objects\"><img alt=\"Metamodel\" src=\"data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDMyIDMyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogICAgPHBhdGggZmlsbD0iI2NjMjkxZiIgZD0iTTI2IDZhMy45OTYgMy45OTYgMCAwIDAtMy44NTggM0gxNy45M0E3Ljk5NiA3Ljk5NiAwIDEgMCA5IDE3LjkzdjQuMjEyYTQgNCAwIDEgMCAyIDB2LTQuMjExYTcuOTUxIDcuOTUxIDAgMCAwIDMuODk4LTEuNjJsMy42NjkgMy42N0EzLjk1MyAzLjk1MyAwIDAgMCAxOCAyMmE0IDQgMCAxIDAgNC00YTMuOTUyIDMuOTUyIDAgMCAwLTIuMDE5LjU2N2wtMy42Ny0zLjY3QTcuOTUgNy45NSAwIDAgMCAxNy45MzIgMTFoNC4yMTFBMy45OTMgMy45OTMgMCAxIDAgMjYgNlpNMTIgMjZhMiAyIDAgMSAxLTItMmEyLjAwMiAyLjAwMiAwIDAgMSAyIDJabS0yLTEwYTYgNiAwIDEgMSA2LTZhNi4wMDcgNi4wMDcgMCAwIDEtNiA2Wm0xNCA2YTIgMiAwIDEgMS0yLTJhMi4wMDIgMi4wMDIgMCAwIDEgMiAyWm0yLTEwYTIgMiAwIDEgMSAyLTJhMi4wMDIgMi4wMDIgMCAwIDEtMiAyWiIvPgo8L3N2Zz4K\" style=\"width:20px;\"></a>");
+
+					$(this.linkHint).append("<a class='whereUsedLink' rel=\"nofollow noopener noreferer\" href=\"#\" title='Show where this object is also used' data-link='" + link + "'><img alt='Find Where Used' style='width:20px;' src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnN2Z2pzPSJodHRwOi8vc3ZnanMuY29tL3N2Z2pzIiB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgeD0iMCIgeT0iMCIgdmlld0JveD0iMCAwIDExOC43ODMgMTE4Ljc4MyIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgNTEyIDUxMiIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgY2xhc3M9IiI+PGc+PHBhdGggZD0iTTExNS45NyAxMDEuNTk3IDg4LjY2MSA3NC4yODZhNDcuNzUgNDcuNzUgMCAwIDAgNy4zMzMtMjUuNDg4YzAtMjYuNTA5LTIxLjQ5LTQ3Ljk5Ni00Ny45OTgtNDcuOTk2UzAgMjIuMjg5IDAgNDguNzk4YzAgMjYuNTEgMjEuNDg3IDQ3Ljk5NSA0Ny45OTYgNDcuOTk1YTQ3Ljc3NiA0Ny43NzYgMCAwIDAgMjcuNDE0LTguNjA1bDI2Ljk4NCAyNi45ODZhOS41NzQgOS41NzQgMCAwIDAgNi43ODggMi44MDYgOS41OCA5LjU4IDAgMCAwIDYuNzkxLTIuODA2IDkuNjAyIDkuNjAyIDAgMCAwLS4wMDMtMTMuNTc3ek00Ny45OTYgODEuMjQzYy0xNy45MTcgMC0zMi40NDMtMTQuNTI1LTMyLjQ0My0zMi40NDNzMTQuNTI2LTMyLjQ0NCAzMi40NDMtMzIuNDQ0YzE3LjkxOCAwIDMyLjQ0MyAxNC41MjYgMzIuNDQzIDMyLjQ0NFM2NS45MTQgODEuMjQzIDQ3Ljk5NiA4MS4yNDN6IiBmaWxsPSIjY2MyOTFmIiBkYXRhLW9yaWdpbmFsPSIjMDAwMDAwIiBvcGFjaXR5PSIxIiBjbGFzcz0iIj48L3BhdGg+PC9nPjwvc3ZnPgo='></img></a>");
+					
 					$(".relatedLink").on("click", function() {
-						addRelated(link);
+						addRelated(oldLink);
+					});
+
+					$(".whereUsedLink").on("click", function() {
+						openWhereUsed(btoa(oldLink));
 					});
 					
 					

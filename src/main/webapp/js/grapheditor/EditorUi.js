@@ -1089,6 +1089,7 @@ EditorUi = function(editor, container, lightbox)
 	{
 		this.open();
 	}
+	
 };
 
 /**
