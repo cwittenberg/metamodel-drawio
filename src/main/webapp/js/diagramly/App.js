@@ -1851,12 +1851,12 @@ App.logAncestorFrames = function()
 				message += ' -> ' + window.location.ancestorOrigins[i];
 			}
 
-			if (hostname.endsWith('embed.diagrams.net') && window.location.ancestorOrigins.length > 0)
+			/*if (hostname.endsWith('embed.diagrams.net') && window.location.ancestorOrigins.length > 0)
 			{
 				var img = new Image();
 				img.src = 'https://log.diagrams.net/images/1x1.png?src=EditorEmbedAncestorFrames' +
 					'&v=' + encodeURIComponent(EditorUi.VERSION) + '&data=' + encodeURIComponent(message);
-			}
+			}*/
 		}
 	}
 	catch (e)

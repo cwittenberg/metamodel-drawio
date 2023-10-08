@@ -612,9 +612,11 @@ Editor.prototype.editAsNew = function(xml, title)
 		});
 			
 		mxEvent.addListener(window, 'message', l);
-		wnd = this.graph.openLink(this.getEditBlankUrl(
+		/*wnd = this.graph.openLink(this.getEditBlankUrl(
 			p + ((p.length > 0) ? '&' : '?') +
-			'client=1'), null, true);
+			'client=1'), null, true);*/
+
+		this.graph.openLink(window.location.href + '/edit');
 	}
 	else
 	{

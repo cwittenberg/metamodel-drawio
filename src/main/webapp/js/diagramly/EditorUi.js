@@ -10463,14 +10463,15 @@
 			EditDataDialog.placeholderHelpLink = 'https://www.drawio.com/doc/faq/predefined-placeholders';
 		}
 		
-		if (/viewer\.diagrams\.net$/.test(window.location.hostname) ||
+		/*if (/viewer\.diagrams\.net$/.test(window.location.hostname) ||
 			/embed\.diagrams\.net$/.test(window.location.hostname))
 		{
 			this.editor.editBlankUrl = 'https://app.diagrams.net/';
-		}
+		}*/
+		this.editor.editBlankUrl = 'https://draw.metamodel.cloud/';
 		
 		// Passes dev mode to new window
-		var editorGetEditBlankUrl = ui.editor.getEditBlankUrl;
+		var editorGetEditBlankUrl = 'https://draw.metamodel.cloud/'; //ui.editor.getEditBlankUrl;
 		
 		this.editor.getEditBlankUrl = function(params)
 		{

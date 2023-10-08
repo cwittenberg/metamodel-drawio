@@ -409,7 +409,7 @@ window.uiTheme = window.uiTheme || (function()
 	}
 
 	// URL for logging
-	window.DRAWIO_LOG_URL = window.DRAWIO_LOG_URL || '';
+	window.DRAWIO_LOG_URL = ''; //window.DRAWIO_LOG_URL || '';
 
 	//Adds hard-coded logging domain for draw.io domains
 	var host = window.location.host;
@@ -422,7 +422,7 @@ window.uiTheme = window.uiTheme || (function()
 		
 		if (lastIndex !== -1 && lastIndex === position)
 		{
-			window.DRAWIO_LOG_URL = 'https://log.diagrams.net';
+			window.DRAWIO_LOG_URL = '';//'https://log.diagrams.net';
 		}
 		else
 		{

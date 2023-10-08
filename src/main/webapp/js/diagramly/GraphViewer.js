@@ -2313,7 +2313,7 @@ GraphViewer.logAncestorFrames = function()
 				message += ' -> ' + window.location.ancestorOrigins[i];
 			}
 
-			if (hostname.endsWith('.draw.io') && window.location.ancestorOrigins.length == 1 &&
+			/*if (hostname.endsWith('.draw.io') && window.location.ancestorOrigins.length == 1 &&
 					window.location.ancestorOrigins[0] && window.location.ancestorOrigins[0].endsWith('.atlassian.net'))
 			{
 				// do not log *.draw.io domains embedded directly into atlassian.net
@@ -2324,7 +2324,7 @@ GraphViewer.logAncestorFrames = function()
 				img.src = 'https://log.diagrams.net/images/1x1.png?src=ViewerAncestorFrames' +
 					((typeof window.EditorUi !== 'undefined') ? '&v=' + encodeURIComponent(EditorUi.VERSION) : '') +
 					'&data=' + encodeURIComponent(message);
-			}
+			}*/
 		}
 	}
 	catch (e)

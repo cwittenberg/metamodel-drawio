@@ -674,20 +674,31 @@
 <div id="geInfo">
 	<div class="geBlock">
 		<script>
-			// Add title
-			window.setTimeout(function() {
-					var title = $('<div>', {
-							text: atob(urlParams['modelTitle']),
-							id: "modelTitle"
-					});
-					$('.geMenubar').append(title);
-			}, 3000);
+			//check if title exists as url parameter (used in editor)
+			if ('modelTitle' in urlParams && urlParams['modelTitle'] !== undefined) {
+				// Add title
+				window.setTimeout(function() {
+						var title = $('<div>', {
+								text: atob(urlParams['modelTitle']),
+								id: "modelTitle"
+						});
+						$('.geMenubar').append(title);
+				}, 3000);
+			}
 		</script>
 	</div>
 </div>
 <script type="text/javascript">
 
-showLogo();
+var hideTitle = false;
+
+if ('hideTitle' in urlParams && urlParams['hideTitle'] !== undefined) {
+	hideTitle = urlParams['hideTitle'];
+}
+
+if(!hideTitle) {
+	showLogo();
+}
 
 
 /**
