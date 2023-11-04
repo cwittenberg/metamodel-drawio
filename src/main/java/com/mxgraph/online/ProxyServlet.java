@@ -54,6 +54,8 @@ public class ProxyServlet extends HttpServlet
 	public ProxyServlet()
 	{
 		super();
+
+		log.info("Logger online for proxy");
 	}
 
 	/**
@@ -71,7 +73,7 @@ public class ProxyServlet extends HttpServlet
 			String ua = request.getHeader("User-Agent");
 			String auth = request.getHeader("Authorization");
 			String dom = getCorsDomain(ref, ua);
-
+			
 			try(OutputStream out = response.getOutputStream())
 			{
 				if ("draw.io".equals(ua))
@@ -98,6 +100,8 @@ public class ProxyServlet extends HttpServlet
 				{
 					connection.setRequestProperty("Authorization", auth);
 				}
+
+				log.log(Level.WARNING, "cors domain recognized for " + dom);
 
 				if (dom != null && dom.length() > 0)
 				{
@@ -288,6 +292,12 @@ public class ProxyServlet extends HttpServlet
 			dom = referer.toLowerCase().substring(0,
 					referer.indexOf(".diagrams.net/") + 13);
 		}
+		else if (referer != null && referer.toLowerCase()
+			.matches("^https?://([a-z0-9,-]+[.])*metamodel[.]cloud/.*"))
+		{
+			dom = referer.toLowerCase().substring(0,
+				referer.indexOf(".metamodel.cloud/") + 16);
+		}	
 		else if (referer != null && referer.toLowerCase()
 				.matches("^https?://([a-z0-9,-]+[.])*quipelements[.]com/.*"))
 		{

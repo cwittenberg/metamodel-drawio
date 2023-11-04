@@ -424,6 +424,8 @@
 	 */
 	Sidebar.prototype.init = function()
 	{
+		openSidebarLoadingDialog();
+
 		this.updateEntries();
 
 		// Uses search.xml index file instead (faster load times)
@@ -439,7 +441,7 @@
 			this.tagIndex = null;	
 		}
 		
-		this.initPalettes();
+		this.initPalettes();		
 	};
 	 
 	/**
@@ -1115,6 +1117,9 @@
 											{
 												var images = JSON.parse(mxUtils.getTextContent(doc.documentElement));
 												dataLoaded(images);
+										
+												
+												console.log(lib.title);
 											}
 											else
 											{
@@ -1167,7 +1172,9 @@
 											{
 												data = JSON.parse(mxUtils.getTextContent(doc.documentElement));
 												this.addEntries(data);
-												barrier();
+												barrier();												
+
+												console.log(lib.title);
 											}
 											else
 											{

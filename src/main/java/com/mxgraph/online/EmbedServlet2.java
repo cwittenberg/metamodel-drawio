@@ -34,6 +34,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -81,11 +83,20 @@ public class EmbedServlet2 extends HttpServlet
 	 */
 	protected HashMap<String, String[]> libraries = new HashMap<String, String[]>();
 
+
+
+	private static final Logger log = Logger
+			.getLogger(HttpServlet.class.getName());
+
+
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
 	public EmbedServlet2()
 	{
+
+		log.info("Logger online for embedservlet");
+
 		if (lastModified == null)
 		{
 			// Uses deployment date as lastModified header
@@ -193,10 +204,27 @@ public class EmbedServlet2 extends HttpServlet
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException
 	{
+
+		String qs = request.getQueryString();
+
+		log.info(qs);
+		String referer = request.getHeader("referer");
+
+		if (referer != null && referer.toLowerCase()
+			.matches("^https?://([a-z0-9,-]+[.])*metamodel[.]cloud/.*"))
+		{
+			String dom = referer.toLowerCase().substring(0,
+				referer.indexOf(".metamodel.cloud/") + 16);
+			
+
+			log.info("Adding header for " + dom);
+			response.addHeader("Access-Control-Allow-Origin", dom);
+		}
+
+
 		try
 		{
-			String qs = request.getQueryString();
-
+			
 			if (qs != null && qs.equals("stats"))
 			{
 				writeStats(response);
@@ -443,8 +471,8 @@ public class EmbedServlet2 extends HttpServlet
 				+ "if (t != null && t.length > 0) {"
 				+ "var script = document.createElement('script');"
 				+ "script.type = 'text/javascript';" + "script.src = '" + proto
-				+ ((dev != null && dev.equals("1")) ? "test" : "www")
-				+ ".draw.io/js/viewer-static.min.js';"
+				//+ ((dev != null && dev.equals("1")) ? "test" : "www")
+				+ "draw.metamodel.cloud/js/viewer-static.min.js';"
 				+ "t[0].parentNode.appendChild(script);}";
 	}
 

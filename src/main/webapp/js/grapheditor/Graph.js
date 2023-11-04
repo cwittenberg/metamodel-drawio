@@ -8126,6 +8126,10 @@ mxStencilRegistry.getStencil = function(name)
 								{
 									if (mxStencilRegistry.allowEval)
 									{
+										//console.log(fname);
+										fname = fname.replace("/diagrams/mermaid/", "");
+										//console.log(fname);
+
 										var req = mxUtils.load(fname);
 										
 										if (req != null && req.getStatus() >= 200 && req.getStatus() <= 299)
@@ -12191,7 +12195,7 @@ if (typeof mxVertexHandler !== 'undefined')
 
 				//bugfix, we use ':' instead of '&' else drawio doesnt work.
 				var h = a.getAttribute('href');
-				h.setAttribute(h.replace(':filters[', '&filters['));
+				h.setAttribute("/" + h.replace(':filters[', '&filters['));
 			}
 
 			// Adds shortened label to link

@@ -1267,6 +1267,23 @@ Sidebar.prototype.addSearchPalette = function(expand)
     	evt.cancelBubble = true;
     });
 
+	// Create the refresh button
+	var refreshButton = document.createElement('button');
+	refreshButton.innerHTML = '&#x21bb; All'; // Unicode for refresh symbol
+	refreshButton.style.marginBottom = '5px';
+	refreshButton.title = 'Refresh metamodel objects'
+	refreshButton.addEventListener('click', function(event) {
+
+		openSidebarLoadingDialog();
+		globalAppInstance.restoreLibraries(this);
+		//todo: expand previously expanded nodes		
+
+	}.bind(this));
+
+	// Add the refresh button to the 'div' or 'outer' or any other suitable container
+	div.appendChild(refreshButton);
+
+
 	var outer = document.createElement('div');
     outer.appendChild(div);
     this.appendChild(outer);
@@ -2152,6 +2169,25 @@ Sidebar.prototype.addUmlPalette = function(expand)
 	this.addPaletteFunctions('uml', mxResources.get('uml'), expand || false, fns);
 	this.setCurrentSearchEntryLibrary();
 };
+
+Sidebar.prototype.addRefreshButton = function()
+{
+	// Create the refresh button
+	var refreshButton = document.createElement('button');
+	refreshButton.innerHTML = '&#x21bb;'; // Unicode for refresh symbol
+	//refreshButton.style.marginBottom = '5px';
+	refreshButton.style='z-index: 10; position: absolute; right: 25px; top: 0px; padding: 8px; background-color: inherit;border-style:none';
+	refreshButton.title = 'Reload';
+	refreshButton.addEventListener('click', function(event) {
+		console.log("ok");
+		//openSidebarLoadingDialog();
+		//globalAppInstance.restoreLibraries(this);
+		
+	}.bind(this));
+
+	return refreshButton;
+};
+
 
 /**
  * Creates and returns the given title element.
@@ -3928,7 +3964,12 @@ Sidebar.prototype.addPalette = function(id, title, expanded, onInit)
 	{
 		div.style.display = 'none';
 	}
-	
+
+	if(this.title != "" && this.title != "Scratchpad") {
+		var refBtn = this.addRefreshButton();
+		elt.appendChild(refBtn);
+	}
+
     this.addFoldingHandler(elt, div, onInit);
 	
 	var outer = document.createElement('div');
@@ -3961,6 +4002,7 @@ Sidebar.prototype.addFoldingHandler = function(title, content, funct)
 	title.style.backgroundRepeat = 'no-repeat';
 	title.style.backgroundPosition = '4px 50%';
 
+	//todo: add spinner here
 	mxEvent.addListener(title, 'click', mxUtils.bind(this, function(evt)
 	{
 		if (mxEvent.getSource(evt) == title)

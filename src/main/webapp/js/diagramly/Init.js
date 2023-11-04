@@ -18,7 +18,9 @@ window.isSvgBrowser = true;
 // CUSTOM_PARAMETERS - URLs for save and export
 window.DRAWIO_BASE_URL = window.DRAWIO_BASE_URL || ((/.*\.draw\.io$/.test(window.location.hostname)) || (/.*\.diagrams\.net$/.test(window.location.hostname)) ?
 	window.location.protocol + '//' + window.location.hostname : 'https://app.diagrams.net');
-window.DRAWIO_LIGHTBOX_URL = window.DRAWIO_LIGHTBOX_URL || 'https://viewer.diagrams.net';
+//window.DRAWIO_LIGHTBOX_URL = window.DRAWIO_LIGHTBOX_URL || 'https://viewer.diagrams.net';
+window.DRAWIO_LIGHTBOX_URL = window.DRAWIO_LIGHTBOX_URL || 'https://draw.metamodel.cloud/.';
+
 window.EXPORT_URL = window.EXPORT_URL || 'https://convert.diagrams.net/node/export';
 window.PLANT_URL = window.PLANT_URL || 'https://plant-aws.diagrams.net';
 window.DRAW_MATH_URL = window.DRAW_MATH_URL || window.DRAWIO_BASE_URL + '/math/es5';
@@ -192,6 +194,7 @@ if (window.mxLanguages == null)
 		window.location.hostname == 'viewer.diagrams.net' ||
 		window.location.hostname == 'embed.diagrams.net' ||
 		window.location.hostname == 'app.diagrams.net' ||
+		window.location.hostname == 'draw.metamodel.cloud' ||		
 		window.location.hostname == 'jgraph.github.io'))
 	{
 		var lang = navigator.language;

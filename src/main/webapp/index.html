@@ -557,6 +557,94 @@
 			});
 			
 		}
+
+
+		/** For sidebar loading */
+		
+		// Function to open the dialog
+		function openSidebarLoadingDialog() {
+			console.log("Start sidebar loading");
+
+			// Create the shade background
+			/*let shade = $('<div></div>')
+				.css({
+					'position': 'fixed',
+					'top': '0',
+					'left': '0',
+					'width': '100%',
+					'height': '100%',
+					'background-color': 'white',
+					'opacity': '0.5',
+					'z-index': '999'
+				})
+				.attr('id', 'shadeBackground');*/
+
+			// Create the dialog
+			let dialog = $('<div class="modal-dialog"></div>')
+				.css({
+					'position': 'fixed',
+					'top': '70px',
+					'left': '0px',
+					'width': '202px',
+					'height': `calc(100% - 70px)`,
+					'z-index': '1000',
+					'background-color': 'white',
+					'opacity':	0.95
+				})
+				.attr('id', 'loadingSidebarDialog');
+
+			// Create the dialog content
+			let dialogContent = $('<div class="modal-content" style="height: 100%;">');
+			let dialogBody = $('<div class="modal-body">')
+			.css({
+				'display': 'flex',
+				'flex-direction': 'column',
+				'align-items': 'center',
+				'justify-content': 'center',
+				'height': '100%'
+			})
+			.html('Loading Metamodel objects<br><br><div id="metamodelLoading"></div>');
+
+			// Add spinner
+			let spinner = $('<div class="spinner-border" role="status"></div>')
+				.css('color', '#cc291f');
+
+			dialogBody.append(spinner);
+			dialogContent.append(dialogBody);
+			dialog.append(dialogContent);
+
+			// Append the shade and dialog to the body
+			//$('body').append(shade);
+			$('body').append(dialog);
+		}
+
+		// Function to close the dialog
+		function closeSidebarLoadingDialog() {
+			/*var totalLibCount = 0;
+			if(urlParams['clibs'] !== undefined) {
+				if(urlParams['clibs'].length > 0) {
+					totalLibCount = urlParams['clibs'].split(";");
+
+					if(totalLibCount.length > 0) {
+						totalLibCount = totalLibCount.length;
+					} else {
+						totalLibCount = 0;
+					}
+				}
+			}
+
+			if(totalPreloadCount >= totalLibCount) {*/
+				console.log("Loading of metamodel libraries completed");
+
+				//$('#shadeBackground').remove();
+				$('#loadingSidebarDialog').remove();
+			//}
+		}
+
+
+//var totalPreloadCount=0;
+		
+
 	</script>
     <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/plgmlhohecdddhbmmkncjdmlhcmaachm">
 	<link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">

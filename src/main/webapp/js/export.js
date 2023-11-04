@@ -75,7 +75,7 @@ if (mxIsElectron)
 	mxStencilRegistry.allowEval = false;
 }
 //TODO Add support for loading math from a local folder
-Editor.initMath((remoteMath? 'https://app.diagrams.net/' : '') + 'math/es5/startup.js');
+Editor.initMath((remoteMath? 'https://draw.metamodel.cloud/' : '') + 'math/es5/startup.js');
 
 function render(data)
 {
