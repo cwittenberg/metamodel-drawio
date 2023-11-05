@@ -2,8 +2,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Starscape</title>
+    <title>Metamodel Modeler</title>
     <meta charset="utf-8">
+	<meta name="robots" content="noindex, nofollow">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="Description" content="draw.io is free online diagram software for making flowcharts, process diagrams, org charts, UML, ER and network diagrams">
     <meta name="Keywords" content="drawio, diagram, online, flow chart, flowchart maker, uml, erd">
@@ -16,6 +17,14 @@
 	<meta name="msapplication-config" content="images/browserconfig.xml">
     <meta name="mobile-web-app-capable" content="yes">
 	<meta name="theme-color" content="#d89000">
+
+	<!-- todo replace this -->
+	<!--script src="https://akzonobel.metamodel.cloud/js/common.ui.js"></script>
+	<script src="https://akzonobel.metamodel.cloud/js/datatable.js"></script>
+	<script src="https://akzonobel.metamodel.cloud/js/codemirror.min.js"></script>
+	<script src="https://akzonobel.metamodel.cloud/js/codemirror.javascript.min.js"></script>
+//-->
+
 	<script type="text/javascript">
 		/**
 		 * URL Parameters and protocol description are here:
@@ -373,6 +382,53 @@
 				status.innerHTML = 'Page could not be loaded. Please try refreshing.';
 			}
 		};
+
+		console.log("Referer ", document.referrer);
+
+		function createNewMMObject(kind, libraryURL, appInstance) {
+			console.log("time to create a new " + kind);
+
+			var obj = {
+				event: 'addNew',
+				kind: kind,
+				db: "metamodel",
+				library: libraryURL
+			}
+
+			var msg = JSON.stringify(obj);
+
+			parent.postMessage(msg, urlParams['domain']); 
+			
+		}
+
+		function isJSON(str) {
+			try {
+				JSON.parse(str);
+				return true;
+			} catch (e) {
+				return false;
+			}
+		}
+
+		window.addEventListener('message', function(event) {
+			console.log("event received", event);
+			if(event != undefined && event != null) {
+				if(isJSON(event.data)) {
+					msg = JSON.parse(event.data);
+					
+					// Check the origin of the message for security purposes
+					if (msg.event === 'refresh') {			
+						console.log('Message received from parent: refresh ', msg.kind);
+						// Handle the message as needed
+
+						msg.library = "U" + urlParams['domain'] + '/diagrams/shapes/' + msg.kind;
+
+						globalAppInstance.loadLibraries([msg.library], null, true, this);
+					}
+				}
+			}
+		});
+
 
 		/**
 		 * For any MX object where 'archimate3' is in the style:
@@ -738,6 +794,14 @@
 			margin-right:15px;
 			color:#cc291f;
 		}
+
+		.mmSidebarButton {
+			opacity:0.8;
+		}
+		.mmSidebarButton:hover {
+			opacity:1;
+			cursor:pointer;
+		}
 	</style>
 	<!-- Workaround for binary XHR in IE 9/10, see App.loadUrl -->
 	<!--[if (IE 9)|(IE 10)]><!-->
@@ -756,7 +820,6 @@
 
 	<script type="text/javascript" src="js/jquery/jquery-3.6.0.min.js"></script>
 	<script type="text/javascript" src="js/gsap.min.js"></script>
-	<script type="text/javascript" src="js/common.ui.js"></script>
 </head>
 <body class="geEditor">
 <div id="geInfo">
@@ -784,9 +847,9 @@ if ('hideTitle' in urlParams && urlParams['hideTitle'] !== undefined) {
 	hideTitle = urlParams['hideTitle'];
 }
 
-if(!hideTitle) {
-	showLogo();
-}
+$.getScript(urlParams['domain'] + '/js/common.ui.js', function() {
+  showLogo();
+});
 
 
 /**

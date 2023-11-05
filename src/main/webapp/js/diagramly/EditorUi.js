@@ -3520,7 +3520,8 @@
 		
 	    if (file.title != '.scratchpad' || this.closableScratchpad)
 	    {
-			buttons.appendChild(btn);
+			//remove disable button
+			//buttons.appendChild(btn);
 			
 			mxEvent.addListener(btn, 'click', mxUtils.bind(this, function(evt)
 			{

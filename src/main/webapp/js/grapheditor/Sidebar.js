@@ -2170,22 +2170,51 @@ Sidebar.prototype.addUmlPalette = function(expand)
 	this.setCurrentSearchEntryLibrary();
 };
 
-Sidebar.prototype.addRefreshButton = function()
+Sidebar.prototype.addRefreshButton = function(title, id)
 {
 	// Create the refresh button
-	var refreshButton = document.createElement('button');
+	var refreshButton = document.createElement('div');
+	refreshButton.className = 'mmSidebarButton';
 	refreshButton.innerHTML = '&#x21bb;'; // Unicode for refresh symbol
 	//refreshButton.style.marginBottom = '5px';
-	refreshButton.style='z-index: 10; position: absolute; right: 25px; top: 0px; padding: 8px; background-color: inherit;border-style:none';
-	refreshButton.title = 'Reload';
+	refreshButton.style='z-index: 10; position: absolute; right: 5px; top: 10px; padding: 0px; background-color: inherit; border-style: none;';
+	refreshButton.title = 'Reload ' + title;
 	refreshButton.addEventListener('click', function(event) {
-		console.log("ok");
+		console.log(title + " refreshing...");
+
+		globalAppInstance.loadLibraries([id], null, true, this);
+
+
 		//openSidebarLoadingDialog();
 		//globalAppInstance.restoreLibraries(this);
 		
 	}.bind(this));
 
 	return refreshButton;
+};
+
+Sidebar.prototype.addCreateNewButton = function(title, id)
+{
+{/* <img class="geAdaptiveAsset" src= title="Add" valign="absmiddle" border="0" style="position: relative; top: 2px; width: 14px; cursor: pointer; margin: 0px 3px;"></img> */}
+
+
+	// Create the refresh button
+
+	var createBtn = $('<img>', {
+		src: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMTkgMTNoLTZ2NmgtMnYtNkg1di0yaDZWNWgydjZoNnYyeiIvPjwvc3ZnPg==",
+		style: 'cursor: pointer; z-index: 100; position: absolute; right: 20px; top: 12px; padding: 0px; background-color: inherit; border-style: none;width:14px;',
+		title: 'Create new ' + title,
+		class: 'geAdaptiveAsset createBtn'
+	}).attr("data-title", title).attr("data-id", id);
+	
+	// .on('click', function(event) {
+	// 	console.log("creating new");
+	// 	createNewMMObject(title, id, globalAppInstance);
+	// });
+
+	
+
+	return createBtn[0];
 };
 
 
@@ -3948,6 +3977,14 @@ Sidebar.prototype.addPalette = function(id, title, expanded, onInit)
 	
 	var div = document.createElement('div');
 	div.className = 'geSidebar';
+
+	if(title != "" && title != "Scratchpad" && id.startsWith("Uhttp")) {
+		var refBtn = this.addRefreshButton(title, id);
+		elt.appendChild(refBtn);
+
+		var newBtn = this.addCreateNewButton(title, id);
+		elt.appendChild(newBtn);
+	}
 	
 	// Disables built-in pan and zoom on touch devices
 	if (mxClient.IS_POINTER)
@@ -3964,14 +4001,9 @@ Sidebar.prototype.addPalette = function(id, title, expanded, onInit)
 	{
 		div.style.display = 'none';
 	}
-
-	if(this.title != "" && this.title != "Scratchpad") {
-		var refBtn = this.addRefreshButton();
-		elt.appendChild(refBtn);
-	}
-
-    this.addFoldingHandler(elt, div, onInit);
 	
+	this.addFoldingHandler(elt, div, onInit);
+
 	var outer = document.createElement('div');
     outer.appendChild(div);
     this.appendChild(outer);
@@ -4002,9 +4034,47 @@ Sidebar.prototype.addFoldingHandler = function(title, content, funct)
 	title.style.backgroundRepeat = 'no-repeat';
 	title.style.backgroundPosition = '4px 50%';
 
+
+	// Define the function to handle the event
+	function addNewHandler(event) {
+		createNewMMObject($(this).data('title'), $(this).data('id'), globalAppInstance);
+	}
+
+	// Use observer for re-attaching Create New click events - that get lost when expanding a section
+	// This function sets up the observer if it hasn't been set up already
+	function setupCreateNewClickEventObserver() {
+		if (document.observerInitialized) {
+		return; // The observer is already set up, so do nothing
+		}
+	
+		// Create the MutationObserver
+		const observer = new MutationObserver((mutations) => {
+		for (const mutation of mutations) {
+			for (const node of mutation.addedNodes) {
+			if (node.nodeType === Node.ELEMENT_NODE) {
+				if (node.matches('.geAdaptiveAsset.createBtn')) {
+				node.removeEventListener('click', addNewHandler);
+				node.addEventListener('click', addNewHandler);
+				}
+				node.querySelectorAll('.geAdaptiveAsset.createBtn').forEach((btn) => {
+				btn.removeEventListener('click', addNewHandler);
+				btn.addEventListener('click', addNewHandler);
+				});
+			}
+			}
+		}
+		});
+	
+		// Observe the document
+		observer.observe(document.body, { childList: true, subtree: true });
+	
+		// Set a flag to indicate the observer has been initialized
+		document.observerInitialized = true;
+	}
+
 	//todo: add spinner here
 	mxEvent.addListener(title, 'click', mxUtils.bind(this, function(evt)
-	{
+	{		
 		if (mxEvent.getSource(evt) == title)
 		{
 			if (content.style.display == 'none')
@@ -4065,10 +4135,20 @@ Sidebar.prototype.addFoldingHandler = function(title, content, funct)
 				title.style.backgroundImage = 'url(\'' + this.collapsedImage + '\')';
 				this.setContentVisible(content, false);
 			}
+
 			
 			mxEvent.consume(evt);
-		}
+		}	
+
+
+		// Run the setup function to ensure the observer is ready
+		setupCreateNewClickEventObserver();
+	
+
 	}));
+
+	//Attach events to Create New button - somehow drawio removes click events when expanding a section (title click)
+	setupCreateNewClickEventObserver();
 	
 	// Prevents focus
 	mxEvent.addListener(title, (mxClient.IS_POINTER) ? 'pointerdown' : 'mousedown',
@@ -4076,6 +4156,9 @@ Sidebar.prototype.addFoldingHandler = function(title, content, funct)
 	{
 		evt.preventDefault();
 	}));
+
+
+	
 };
 
 /**
