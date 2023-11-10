@@ -2224,7 +2224,7 @@ Sidebar.prototype.addCreateNewButton = function(title, id)
 Sidebar.prototype.createTitle = function(label)
 {
 	var elt = document.createElement('a');
-	elt.setAttribute('title', mxResources.get('sidebarTooltip'));
+	//elt.setAttribute('title', mxResources.get('sidebarTooltip'));
 	elt.className = 'geTitle';
 	mxUtils.write(elt, label);
 

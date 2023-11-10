@@ -5699,7 +5699,7 @@ App.prototype.loadLibraries = function(libs, done, forceReload = false, sidebar=
             var onerror = mxUtils.bind(this, function(keep)
             {
               ignore(id, keep);
-              console.log("error when loading ", file);
+              console.error("Error when loading " + id + " - Does the Shape match the Metamodel?");
               waiting--;
               //totalPreloadCount++;
               //closeSidebarLoadingDialog();
